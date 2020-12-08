@@ -1,0 +1,52 @@
+---
+- hosts: dell
+
+  tasks:
+    - name: Install and check Git 
+      package:
+        name: git
+        state: present
+
+    - name: Install and check all needed docker componenst
+      package:
+        name:
+          -  docker
+          -  docker.io
+          -  docker-compose
+        state: latest
+
+    - name: make dir for git files to be cloned in
+      file:
+        path: "/usr/local/etc/docker-haproxy-nginx"
+        state: directory
+
+    - name: Clone needed files from github for docker
+      git:
+        repo: https://github.com/SanderVerbeken/dockerngingxhaproxy.git
+        dest: /usr/local/etc/docker-haproxy-nginx
+        force: yes
+
+    - name: changing the perm of the script 1 up
+      file:
+        dest: /usr/local/etc/docker-haproxy-nginx/dockerup.sh
+        mode: a+x
+
+    - name: changing the perm of the script 2 down
+      file:
+        dest: /usr/local/etc/docker-haproxy-nginx/dockerdown.sh
+        mode: a+x
+
+    - name: changing the perm of the script 3 request
+      file:
+        dest: /usr/local/etc/docker-haproxy-nginx/requests.sh
+        mode: a+x
+
+    - name: starting docker-compose up
+      command: chdir=/usr/local/etc/docker-haproxy-nginx/ sh dockerup.sh 
+     
+    - name:
+      command: chdir=/usr/local/etc/docker-haproxy-nginx/ sh requests.sh
+      register: shell_result
+      
+    - debug:
+        var: shell_result.stdout_lines

@@ -1,0 +1,13 @@
+---
+- hosts: dell
+
+  tasks:
+    - name: stopping all docker containers
+      shell: docker stop $(docker ps -a -q)
+
+    - name: removing all containers
+      shell: docker rm $(docker ps -a -q)
+      register: shell_result
+
+    - debug:
+        var: shell_result.stdout_lines
