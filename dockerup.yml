@@ -13,6 +13,7 @@
           -  docker
           -  docker.io
           -  docker-compose
+          -  curl
         state: latest
 
     - name: make dir for git files to be cloned in
